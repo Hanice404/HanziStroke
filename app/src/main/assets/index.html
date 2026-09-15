@@ -4000,9 +4000,18 @@
 
   // 试听微软 TTS 发音
   function testTtsVoice() {
-    const voice = AI_CONFIG.ttsVoice || document.getElementById('cfg-tts-voice')?.value || 'zh-CN-XiaoxiaoNeural';
-    const rate = AI_CONFIG.ttsRate || document.getElementById('cfg-tts-rate')?.value || '-10%';
-    const testText = '你好，我是微软神经网络语音助手。';
+    const voice = document.getElementById('cfg-tts-voice')?.value || AI_CONFIG.ttsVoice || 'zh-CN-XiaoxiaoNeural';
+    const rate = document.getElementById('cfg-tts-rate')?.value || AI_CONFIG.ttsRate || '-10%';
+    const VOICE_SAMPLES = {
+      'zh-CN-XiaoxiaoNeural': '你好，我是晓晓，很高兴为你朗读汉字。',
+      'zh-CN-YunxiNeural': '你好，我是云希，阳光清亮，跟着我一起学汉字吧！',
+      'zh-CN-YunjianNeural': '你好，我是云健，沉稳大气，规范字词教学。',
+      'zh-CN-XiaoyiNeural': '你好，我是晓伊，温柔甜美，一起快乐学汉字。',
+      'zh-CN-YunyangNeural': '你好，我是云扬，专业播音，标准普通话发音。',
+      'zh-CN-liaoning-XiaobeiNeural': '你好，我是晓北，哎呀妈呀，东北老铁教你念汉字啦！',
+      'zh-CN-shaanxi-XiaoniNeural': '你好，我是晓妮，陕北秦腔风味，教你咥透这个汉字！'
+    };
+    const testText = VOICE_SAMPLES[voice] || '你好，我是微软高拟真语音助手。';
     const btn = document.getElementById('btn-test-tts');
     if (btn) {
       btn.style.opacity = '0.6';

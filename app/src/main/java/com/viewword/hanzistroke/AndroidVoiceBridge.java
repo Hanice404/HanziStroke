@@ -37,6 +37,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -83,6 +84,25 @@ public class AndroidVoiceBridge {
         this.webView = webView;
         this.mainHandler = new Handler(Looper.getMainLooper());
         initTTS();
+        cleanupCorruptCache();
+    }
+
+    private void cleanupCorruptCache() {
+        new Thread(() -> {
+            try {
+                File cacheDir = new File(activity.getCacheDir(), "edge_tts_cache");
+                if (cacheDir.exists() && cacheDir.isDirectory()) {
+                    File[] files = cacheDir.listFiles();
+                    if (files != null) {
+                        for (File f : files) {
+                            if (f.isFile() && f.length() <= 1024) {
+                                f.delete();
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+        }).start();
     }
 
     private void initTTS() {
@@ -149,7 +169,7 @@ public class AndroidVoiceBridge {
         final String selectedRate = (rate != null && !rate.trim().isEmpty()) ? rate.trim() : "-10%";
 
         mainHandler.post(() -> {
-            stopSpeaking();
+            stopSpeakingInternal();
             speakWithEdgeTts(cleanText, selectedVoice, selectedRate);
         });
     }
@@ -162,10 +182,14 @@ public class AndroidVoiceBridge {
             }
             String cacheKey = sha256Hex(voice + "_" + rate + "_" + text);
             File cacheFile = new File(cacheDir, cacheKey + ".mp3");
-            if (cacheFile.exists() && cacheFile.length() > 0) {
-                Log.d(TAG, "Playing Edge TTS from local disk cache: " + cacheFile.getName());
-                playMp3File(cacheFile, text, voice, rate);
-                return;
+            if (cacheFile.exists()) {
+                if (cacheFile.length() > 1024) {
+                    Log.d(TAG, "Playing Edge TTS from local disk cache: " + cacheFile.getName() + " (" + cacheFile.length() + " bytes)");
+                    playMp3File(cacheFile, text, voice, rate);
+                    return;
+                } else {
+                    cacheFile.delete();
+                }
             }
 
             long WIN_EPOCH = 11644473600L;
@@ -190,9 +214,6 @@ public class AndroidVoiceBridge {
                     .header("Pragma", "no-cache")
                     .header("Cache-Control", "no-cache")
                     .header("Origin", "chrome-extension://jdiccldimpdaibmpdkjnbmckianbfold")
-                    .header("Accept-Encoding", "gzip, deflate, br, zstd")
-                    .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
-                    .header("Cookie", "muid=" + UUID.randomUUID().toString().replace("-", "").toUpperCase() + ";")
                     .build();
 
             ByteArrayOutputStream audioBuffer = new ByteArrayOutputStream();
@@ -200,6 +221,7 @@ public class AndroidVoiceBridge {
             currentTtsWebSocket = httpClient.newWebSocket(request, new WebSocketListener() {
                 @Override
                 public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
+                    Log.d(TAG, "Edge TTS WebSocket connected for voice: " + voice);
                     SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT+0000 (Coordinated Universal Time)'", Locale.US);
                     sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
                     String timestamp = sdf.format(new Date());
@@ -239,7 +261,8 @@ public class AndroidVoiceBridge {
                     if (textMsg.contains("Path:turn.end")) {
                         webSocket.close(1000, "Done");
                         byte[] mp3Data = audioBuffer.toByteArray();
-                        if (mp3Data.length > 0) {
+                        Log.d(TAG, "Edge TTS synthesis finished, received mp3 bytes: " + mp3Data.length + " for voice " + voice);
+                        if (mp3Data.length > 512) {
                             try (FileOutputStream fos = new FileOutputStream(cacheFile)) {
                                 fos.write(mp3Data);
                                 fos.flush();
@@ -248,6 +271,7 @@ public class AndroidVoiceBridge {
                             }
                             playMp3File(cacheFile, text, voice, rate);
                         } else {
+                            Log.w(TAG, "Edge TTS returned insufficient audio (" + mp3Data.length + " bytes), falling back to system TTS");
                             speakInternal(text, voice, rate);
                         }
                     }
@@ -272,14 +296,31 @@ public class AndroidVoiceBridge {
                     try {
                         if (mediaPlayer.isPlaying()) mediaPlayer.stop();
                         mediaPlayer.reset();
+                        mediaPlayer.release();
                     } catch (Exception ignored) {}
-                } else {
-                    mediaPlayer = new MediaPlayer();
+                    mediaPlayer = null;
                 }
-                mediaPlayer.setDataSource(file.getAbsolutePath());
-                mediaPlayer.setOnPreparedListener(MediaPlayer::start);
+                mediaPlayer = new MediaPlayer();
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    mediaPlayer.setDataSource(fis.getFD());
+                }
+                mediaPlayer.setOnPreparedListener(mp -> {
+                    try {
+                        mp.start();
+                    } catch (Exception e) {
+                        Log.e(TAG, "MediaPlayer start failed", e);
+                    }
+                });
+                mediaPlayer.setOnCompletionListener(mp -> {
+                    try {
+                        mp.reset();
+                    } catch (Exception ignored) {}
+                });
                 mediaPlayer.setOnErrorListener((mp, what, extra) -> {
                     Log.e(TAG, "MediaPlayer playback error (" + what + ", " + extra + ")");
+                    try {
+                        mp.reset();
+                    } catch (Exception ignored) {}
                     speakInternal(fallbackText, voice, rate);
                     return true;
                 });
@@ -300,27 +341,29 @@ public class AndroidVoiceBridge {
                    .replace("'", "&apos;");
     }
 
+    private void stopSpeakingInternal() {
+        if (currentTtsWebSocket != null) {
+            try {
+                currentTtsWebSocket.cancel();
+            } catch (Exception ignored) {}
+            currentTtsWebSocket = null;
+        }
+        if (mediaPlayer != null) {
+            try {
+                if (mediaPlayer.isPlaying()) mediaPlayer.stop();
+                mediaPlayer.reset();
+            } catch (Exception ignored) {}
+        }
+        if (textToSpeech != null) {
+            try {
+                textToSpeech.stop();
+            } catch (Exception ignored) {}
+        }
+    }
+
     @JavascriptInterface
     public void stopSpeaking() {
-        mainHandler.post(() -> {
-            if (currentTtsWebSocket != null) {
-                try {
-                    currentTtsWebSocket.cancel();
-                } catch (Exception ignored) {}
-                currentTtsWebSocket = null;
-            }
-            if (mediaPlayer != null) {
-                try {
-                    if (mediaPlayer.isPlaying()) mediaPlayer.stop();
-                    mediaPlayer.reset();
-                } catch (Exception ignored) {}
-            }
-            if (textToSpeech != null) {
-                try {
-                    textToSpeech.stop();
-                } catch (Exception ignored) {}
-            }
-        });
+        mainHandler.post(this::stopSpeakingInternal);
     }
 
     private void speakInternal(String text) {
