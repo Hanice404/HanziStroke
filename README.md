@@ -1,4 +1,4 @@
-# 笔顺 (HanziStroke) · v1.0.2
+# 笔顺 (HanziStroke) · v1.0.3
 
 <p align="center">
   <img src="ic_launcher.png" width="100" height="100" alt="笔顺 Logo" style="border-radius: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);" />
@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Hanice404/HanziStroke/releases/tag/v1.0.2">
-    <img src="https://img.shields.io/badge/Release-v1.0.2-blue.svg?style=flat-square" alt="Version">
+  <a href="https://github.com/Hanice404/HanziStroke/releases/tag/v1.0.3">
+    <img src="https://img.shields.io/badge/Release-v1.0.3-blue.svg?style=flat-square" alt="Version">
   </a>
   <img src="https://img.shields.io/badge/Platform-Android-green.svg?style=flat-square" alt="Platform">
   <img src="https://img.shields.io/badge/LLM-DeepSeek%20V4-orange.svg?style=flat-square" alt="LLM">
@@ -45,9 +45,9 @@
 
 ## 🚀 下载与安装
 
-请前往 [Releases 页面](https://github.com/Hanice404/HanziStroke/releases/tag/v1.0.2) 下载最新版本的 APK 安装包：
+请前往 [Releases 页面](https://github.com/Hanice404/HanziStroke/releases/tag/v1.0.3) 下载最新版本的 APK 安装包：
 
-- **[笔顺_v1.0.2.apk (HanziStroke_v1.0.2.apk)](https://github.com/Hanice404/HanziStroke/releases/download/v1.0.2/HanziStroke_v1.0.2.apk)**
+- **[笔顺_v1.0.3.apk (HanziStroke_v1.0.3.apk)](https://github.com/Hanice404/HanziStroke/releases/download/v1.0.3/HanziStroke_v1.0.3.apk)**
 
 ## 🛠️ 项目构建
 

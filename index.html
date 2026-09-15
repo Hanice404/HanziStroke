@@ -1083,20 +1083,25 @@
     }
 
     /* ASR 服务商选择弹窗选项 */
-    .asr-provider-modal-backdrop, .tts-voice-modal-backdrop {
+    /* ASR 提供商、发音人与语速选择弹窗选项统一样式 */
+    .asr-provider-modal-backdrop, .tts-voice-modal-backdrop, #tts-rate-modal {
       z-index: 3500;
     }
-    .asr-options-list {
+    .asr-options-list, .voice-options-list, .rate-options-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       margin-top: 14px;
+      max-height: 52vh;
+      overflow-y: auto;
+      padding: 4px 2px;
+      -webkit-overflow-scrolling: touch;
     }
-    .asr-option-item {
+    .asr-option-item, .voice-option-item, .rate-option-item {
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 14px 16px;
+      padding: 13px 16px;
       border-radius: 16px;
       border: 1.5px solid var(--border-color);
       background: #ffffff;
@@ -1104,20 +1109,22 @@
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       user-select: none;
       -webkit-user-select: none;
+      box-sizing: border-box;
+      width: 100%;
     }
-    .asr-option-item:hover, .voice-option-item:hover {
+    .asr-option-item:hover, .voice-option-item:hover, .rate-option-item:hover {
       border-color: #cbd5e1;
       background: #f8fafc;
     }
-    .asr-option-item:active, .voice-option-item:active {
+    .asr-option-item:active, .voice-option-item:active, .rate-option-item:active {
       transform: scale(0.98);
     }
-    .asr-option-item.is-selected, .voice-option-item.is-selected {
+    .asr-option-item.is-selected, .voice-option-item.is-selected, .rate-option-item.is-selected {
       border-color: #0f172a;
       background: #f8fafc;
       box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
     }
-    .asr-opt-icon-box, .voice-opt-icon-box {
+    .asr-opt-icon-box, .voice-opt-icon-box, .rate-opt-icon-box {
       width: 42px;
       height: 42px;
       border-radius: 12px;
@@ -1130,54 +1137,60 @@
       transition: all 0.2s;
     }
     .asr-option-item.is-selected .asr-opt-icon-box,
-    .voice-option-item.is-selected .voice-opt-icon-box {
+    .voice-option-item.is-selected .voice-opt-icon-box,
+    .rate-option-item.is-selected .rate-opt-icon-box {
       background: #0f172a;
       color: #ffffff;
     }
-    .asr-opt-icon-box svg, .voice-opt-icon-box svg {
+    .asr-opt-icon-box svg, .voice-opt-icon-box svg, .rate-opt-icon-box svg {
       width: 22px;
       height: 22px;
     }
-    .asr-opt-info, .voice-opt-info {
+    .asr-opt-info, .voice-opt-info, .rate-opt-info {
       flex: 1;
+      min-width: 0;
       text-align: left;
     }
-    .asr-opt-name-row, .voice-opt-name-row {
+    .asr-opt-name-row, .voice-opt-name-row, .rate-opt-name-row {
       display: flex;
       align-items: center;
       gap: 8px;
       margin-bottom: 3px;
+      white-space: nowrap;
     }
-    .asr-opt-name, .voice-opt-name {
+    .asr-opt-name, .voice-opt-name, .rate-opt-name {
       font-size: 15px;
       font-weight: 700;
       color: #0f172a;
     }
-    .voice-opt-tag {
+    .voice-opt-tag, .rate-opt-tag {
       font-size: 12px;
       color: #64748b;
       font-weight: 500;
     }
-    .asr-opt-badge, .voice-opt-badge {
+    .asr-opt-badge, .voice-opt-badge, .rate-opt-badge {
       font-size: 11px;
       font-weight: 600;
       padding: 2px 8px;
       border-radius: 20px;
     }
-    .asr-opt-badge.badge-rec, .voice-opt-badge.badge-rec {
+    .asr-opt-badge.badge-rec, .voice-opt-badge.badge-rec, .rate-opt-badge.badge-rec {
       background: #dcfce7;
       color: #15803d;
     }
-    .asr-opt-badge.badge-custom, .voice-opt-badge.badge-custom {
+    .asr-opt-badge.badge-custom, .voice-opt-badge.badge-custom, .rate-opt-badge.badge-custom {
       background: #f1f5f9;
       color: #475569;
     }
-    .asr-opt-desc, .voice-opt-desc {
+    .asr-opt-desc, .voice-opt-desc, .rate-opt-desc {
       font-size: 12px;
       color: #64748b;
       line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .asr-opt-check, .voice-opt-check {
+    .asr-opt-check, .voice-opt-check, .rate-opt-check {
       width: 22px;
       height: 22px;
       border-radius: 50%;
@@ -1189,12 +1202,13 @@
       transition: all 0.2s ease;
       flex-shrink: 0;
     }
-    .asr-opt-check svg, .voice-opt-check svg {
+    .asr-opt-check svg, .voice-opt-check svg, .rate-opt-check svg {
       width: 14px;
       height: 14px;
     }
     .asr-option-item.is-selected .asr-opt-check,
-    .voice-option-item.is-selected .voice-opt-check {
+    .voice-option-item.is-selected .voice-opt-check,
+    .rate-option-item.is-selected .rate-opt-check {
       background: #0f172a;
       border-color: #0f172a;
       color: #ffffff;
@@ -1680,7 +1694,7 @@
     </div>
     
     <div class="input-password-wrapper" style="margin-top: 14px; margin-bottom: 8px;">
-      <input type="password" id="settings-auth-pwd" class="form-input" placeholder="请输入访问密码" style="font-size: 15px; letter-spacing: 1px;">
+      <input type="password" inputmode="numeric" pattern="[0-9]*" id="settings-auth-pwd" class="form-input" placeholder="请输入数字访问密码" style="font-size: 15px; letter-spacing: 2px;">
       <button type="button" class="input-toggle-eye" id="toggle-auth-pwd" title="显示密码" aria-label="显示密码" onclick="togglePasswordVisibility('settings-auth-pwd', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
@@ -1705,7 +1719,7 @@
   <div class="custom-modal-card" style="max-height: 85vh; overflow-y: auto;">
     <div class="custom-modal-header">
       <div class="custom-modal-header-text">
-        <div class="custom-modal-title">系统配置 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.2</span></div>
+        <div class="custom-modal-title">系统配置 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.3</span></div>
         <div class="custom-modal-desc">自定义大模型语义提取、语音识别与发音设置</div>
       </div>
       <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeSettingsModal()">
@@ -2188,7 +2202,7 @@
 </div>
 
 <!-- 4. 语速选择弹窗 (适配主样式) -->
-<div id="tts-rate-modal" class="custom-modal-backdrop" style="z-index: 3250;">
+<div id="tts-rate-modal" class="custom-modal-backdrop" style="z-index: 3500;">
   <div class="custom-modal-card" style="max-height: 80vh; display: flex; flex-direction: column;">
     <div class="custom-modal-header">
       <div class="custom-modal-header-text">
@@ -2302,7 +2316,7 @@
     <div class="custom-modal-header">
       <img src="ic_launcher.png" alt="笔顺图标" style="width: 44px; height: 44px; border-radius: 12px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0; margin-right: 8px;">
       <div class="custom-modal-header-text">
-        <div class="custom-modal-title">笔顺 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.2</span></div>
+        <div class="custom-modal-title">笔顺 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.3</span></div>
         <div class="custom-modal-desc">汉字书写笔顺动画与教学发音助手</div>
       </div>
       <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeAppInfoModal()">
@@ -2377,6 +2391,17 @@
       return u + '/chat/completions';
     }
     return u + '/v1/chat/completions';
+  }
+
+  function getModelsUrl(url) {
+    let u = (url || DEFAULT_CONFIG.url).trim().replace(/\/+$/, '');
+    if (u.endsWith('/chat/completions')) {
+      return u.replace(/\/chat\/completions$/, '/models');
+    }
+    if (u.endsWith('/v1')) {
+      return u + '/models';
+    }
+    return u + '/v1/models';
   }
 
   function loadConfig() {
@@ -2607,42 +2632,76 @@
     serviceStatus.tts = 'checking';
     updateServiceStatusUI();
 
-    // 1. 检查 LLM 连接
-    const llmPromise = (async () => {
+    // 1. 检查 LLM 连接 (支持快速 /models 探测与冷启动自动重试)
+    const checkLlmOnce = async (timeoutMs = 12000) => {
+      // 优先轻量探测 /models 接口以提升冷启动速度
       try {
-        const endpoint = getChatCompletionsUrl(AI_CONFIG.url);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-        let checkModel = AI_CONFIG.model || DEFAULT_CONFIG.model;
-        if (checkModel === 'deepseek-v4-flash') checkModel = DEFAULT_CONFIG.model;
-        const response = await fetch(endpoint, {
-          method: 'POST',
+        const modelsUrl = getModelsUrl(AI_CONFIG.url);
+        const ctrl = new AbortController();
+        const tId = setTimeout(() => ctrl.abort(), 6000);
+        const resp = await fetch(modelsUrl, {
+          method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${AI_CONFIG.key}`
           },
-          body: JSON.stringify({
-            model: checkModel,
-            messages: [{ role: 'user', content: 'hi' }],
-            max_tokens: 1
-          }),
-          signal: controller.signal
+          signal: ctrl.signal
         });
-        clearTimeout(timeoutId);
-
-        const contentType = response.headers.get('content-type') || '';
-        if (!response.ok || !contentType.includes('application/json')) {
-          throw new Error('API 响应非 JSON 格式');
+        clearTimeout(tId);
+        if (resp.ok) {
+          const mData = await resp.json();
+          if (mData && (mData.data || mData.object || Array.isArray(mData))) {
+            return true;
+          }
         }
-        const data = await response.json();
-        if (data && (data.choices || data.id || data.object)) {
-          serviceStatus.llm = 'online';
-        } else {
+      } catch (err) {}
+
+      // 回退探测 chat/completions
+      const endpoint = getChatCompletionsUrl(AI_CONFIG.url);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      let checkModel = AI_CONFIG.model || DEFAULT_CONFIG.model;
+      if (checkModel === 'deepseek-v4-flash') checkModel = DEFAULT_CONFIG.model;
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${AI_CONFIG.key}`
+        },
+        body: JSON.stringify({
+          model: checkModel,
+          messages: [{ role: 'user', content: 'hi' }],
+          max_tokens: 1
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      const contentType = response.headers.get('content-type') || '';
+      if (!response.ok || !contentType.includes('application/json')) {
+        return false;
+      }
+      const data = await response.json();
+      return !!(data && (data.choices || data.id || data.object));
+    };
+
+    const llmPromise = (async () => {
+      try {
+        let isOk = await checkLlmOnce(12000);
+        if (!isOk) {
+          // 首次启动或网络冷启动时稍等 1.2 秒重试一次，避免误报离线
+          await new Promise(r => setTimeout(r, 1200));
+          isOk = await checkLlmOnce(15000);
+        }
+        serviceStatus.llm = isOk ? 'online' : 'offline';
+      } catch (e) {
+        try {
+          await new Promise(r => setTimeout(r, 1200));
+          const isOk = await checkLlmOnce(15000);
+          serviceStatus.llm = isOk ? 'online' : 'offline';
+        } catch (e2) {
           serviceStatus.llm = 'offline';
         }
-      } catch (e) {
-        serviceStatus.llm = 'offline';
       }
     })();
 
@@ -3835,6 +3894,12 @@
   }
 
   function selectTtsVoice(voiceId) {
+    AI_CONFIG.ttsVoice = voiceId;
+    const hiddenInput = document.getElementById('cfg-tts-voice');
+    if (hiddenInput) hiddenInput.value = voiceId;
+    try {
+      localStorage.setItem('viewword_ai_config', JSON.stringify(AI_CONFIG));
+    } catch(e) {}
     updateTtsVoiceDisplay(voiceId);
     setTimeout(() => {
       closeTtsVoiceSelectModal();
@@ -3921,6 +3986,12 @@
   }
 
   function selectTtsRate(rateVal) {
+    AI_CONFIG.ttsRate = rateVal;
+    const hiddenInput = document.getElementById('cfg-tts-rate');
+    if (hiddenInput) hiddenInput.value = rateVal;
+    try {
+      localStorage.setItem('viewword_ai_config', JSON.stringify(AI_CONFIG));
+    } catch(e) {}
     updateTtsRateDisplay(rateVal);
     setTimeout(() => {
       closeTtsRateSelectModal();
@@ -3929,8 +4000,8 @@
 
   // 试听微软 TTS 发音
   function testTtsVoice() {
-    const voice = document.getElementById('cfg-tts-voice')?.value || 'zh-CN-XiaoxiaoNeural';
-    const rate = document.getElementById('cfg-tts-rate')?.value || '-10%';
+    const voice = AI_CONFIG.ttsVoice || document.getElementById('cfg-tts-voice')?.value || 'zh-CN-XiaoxiaoNeural';
+    const rate = AI_CONFIG.ttsRate || document.getElementById('cfg-tts-rate')?.value || '-10%';
     const testText = '你好，我是微软神经网络语音助手。';
     const btn = document.getElementById('btn-test-tts');
     if (btn) {
@@ -3946,7 +4017,7 @@
         window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(testText);
         msg.lang = 'zh-CN';
-        msg.rate = rate.includes('-') ? 0.75 : (rate.includes('+') ? 1.15 : 0.9);
+        msg.rate = rate.includes('-20') ? 0.65 : (rate.includes('-10') ? 0.8 : (rate.includes('+15') ? 1.2 : 1.0));
         window.speechSynthesis.speak(msg);
       } catch (e) {}
     }
@@ -3997,7 +4068,13 @@
     authErrorEl.style.display = 'none';
     resetPasswordVisibility('settings-auth-pwd', 'toggle-auth-pwd');
     settingsAuthModal.classList.add('show');
-    setTimeout(() => authPwdInput.focus(), 150);
+    authPwdInput.focus();
+    setTimeout(() => {
+      authPwdInput.focus();
+      if (window.AndroidVoiceBridge && typeof window.AndroidVoiceBridge.showKeyboard === 'function') {
+        window.AndroidVoiceBridge.showKeyboard();
+      }
+    }, 150);
   });
 
   document.getElementById('btn-auth-cancel').addEventListener('click', () => {
@@ -4108,7 +4185,7 @@
       setTimeout(() => {
         btn.innerHTML = origText;
         btn.style.opacity = '1';
-        showCustomToast('当前已是最新版本 v1.0.2', 'success');
+        showCustomToast('当前已是最新版本 v1.0.3', 'success');
       }, 800);
     }
   }
@@ -4127,10 +4204,12 @@
   }, { passive: false });
 
   window.addEventListener('DOMContentLoaded', () => {
-    checkModelConnection();
     updateAsrProviderDisplay(AI_CONFIG.asrProvider || DEFAULT_CONFIG.asrProvider);
     updateTtsVoiceDisplay(AI_CONFIG.ttsVoice || DEFAULT_CONFIG.ttsVoice);
     updateTtsRateDisplay(AI_CONFIG.ttsRate || DEFAULT_CONFIG.ttsRate);
+    setTimeout(() => {
+      checkModelConnection();
+    }, 400);
   });
 </script>
 </body>

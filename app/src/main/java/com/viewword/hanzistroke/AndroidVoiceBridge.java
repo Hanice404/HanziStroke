@@ -164,7 +164,7 @@ public class AndroidVoiceBridge {
             File cacheFile = new File(cacheDir, cacheKey + ".mp3");
             if (cacheFile.exists() && cacheFile.length() > 0) {
                 Log.d(TAG, "Playing Edge TTS from local disk cache: " + cacheFile.getName());
-                playMp3File(cacheFile, text);
+                playMp3File(cacheFile, text, voice, rate);
                 return;
             }
 
@@ -207,17 +207,17 @@ public class AndroidVoiceBridge {
                     String configMsg = "X-Timestamp:" + timestamp + "\r\n"
                             + "Content-Type:application/json; charset=utf-8\r\n"
                             + "Path:speech.config\r\n\r\n"
-                            + "{\"context\":{\"synthesis\":{\"audio\":{\"metadataoptions\":{\"sentenceBoundaryEnabled\":\"false\",\"wordBoundaryEnabled\":\"false\"},\"outputFormat\":\"audio-24khz-48kbitrate-mono-mp3\"}}}}";
+                            + "{\"context\":{\"synthesis\":{\"audio\":{\"metadataoptions\":{\"sentenceBoundaryEnabled\":\"false\",\"wordBoundaryEnabled\":\"false\"},\"outputFormat\":\"audio-24khz-48kbitrate-mono-mp3\"}}}}\r\n";
                     webSocket.send(configMsg);
 
                     String reqId = UUID.randomUUID().toString().replace("-", "");
-                    String ssml = "<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='zh-CN'>"
+                    String ssml = "<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='en-US'>"
                             + "<voice name='" + voice + "'>"
-                            + "<prosody rate='" + rate + "' pitch='+0Hz'>" + escapeXml(text) + "</prosody>"
+                            + "<prosody pitch='+0Hz' rate='" + rate + "' volume='+0%'>" + escapeXml(text) + "</prosody>"
                             + "</voice></speak>";
                     String ssmlMsg = "X-RequestId:" + reqId + "\r\n"
                             + "Content-Type:application/ssml+xml\r\n"
-                            + "X-Timestamp:" + timestamp + "\r\n"
+                            + "X-Timestamp:" + timestamp + "Z\r\n"
                             + "Path:ssml\r\n\r\n"
                             + ssml;
                     webSocket.send(ssmlMsg);
@@ -246,9 +246,9 @@ public class AndroidVoiceBridge {
                             } catch (Exception e) {
                                 Log.w(TAG, "Failed to save TTS cache file", e);
                             }
-                            playMp3File(cacheFile, text);
+                            playMp3File(cacheFile, text, voice, rate);
                         } else {
-                            speakInternal(text);
+                            speakInternal(text, voice, rate);
                         }
                     }
                 }
@@ -256,16 +256,16 @@ public class AndroidVoiceBridge {
                 @Override
                 public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, Response response) {
                     Log.w(TAG, "Edge TTS WebSocket error: " + t.getMessage() + ", falling back to system TTS");
-                    speakInternal(text);
+                    speakInternal(text, voice, rate);
                 }
             });
         } catch (Exception e) {
             Log.e(TAG, "Exception initiating Edge TTS, fallback to system TTS", e);
-            speakInternal(text);
+            speakInternal(text, voice, rate);
         }
     }
 
-    private void playMp3File(File file, String fallbackText) {
+    private void playMp3File(File file, String fallbackText, String voice, String rate) {
         mainHandler.post(() -> {
             try {
                 if (mediaPlayer != null) {
@@ -280,13 +280,13 @@ public class AndroidVoiceBridge {
                 mediaPlayer.setOnPreparedListener(MediaPlayer::start);
                 mediaPlayer.setOnErrorListener((mp, what, extra) -> {
                     Log.e(TAG, "MediaPlayer playback error (" + what + ", " + extra + ")");
-                    speakInternal(fallbackText);
+                    speakInternal(fallbackText, voice, rate);
                     return true;
                 });
                 mediaPlayer.prepareAsync();
             } catch (Exception e) {
                 Log.e(TAG, "Error playing audio file", e);
-                speakInternal(fallbackText);
+                speakInternal(fallbackText, voice, rate);
             }
         });
     }
@@ -306,8 +306,8 @@ public class AndroidVoiceBridge {
             if (currentTtsWebSocket != null) {
                 try {
                     currentTtsWebSocket.cancel();
-                    currentTtsWebSocket = null;
                 } catch (Exception ignored) {}
+                currentTtsWebSocket = null;
             }
             if (mediaPlayer != null) {
                 try {
@@ -324,16 +324,50 @@ public class AndroidVoiceBridge {
     }
 
     private void speakInternal(String text) {
+        speakInternal(text, null, null);
+    }
+
+    private void speakInternal(String text, String voice, String rate) {
         if (textToSpeech != null && isTtsReady) {
             try {
-                textToSpeech.setSpeechRate(0.85f);
-                textToSpeech.setPitch(1.0f);
+                float speechRate = 0.85f;
+                if (rate != null) {
+                    if (rate.contains("-20")) speechRate = 0.65f;
+                    else if (rate.contains("-10")) speechRate = 0.80f;
+                    else if (rate.contains("+15")) speechRate = 1.20f;
+                    else if (rate.contains("+0") || rate.contains("0%")) speechRate = 1.0f;
+                }
+                textToSpeech.setSpeechRate(speechRate);
+
+                float pitch = 1.0f;
+                if (voice != null) {
+                    if (voice.contains("Yunxi") || voice.contains("Yunjian") || voice.contains("Yunyang")) {
+                        pitch = 0.92f;
+                    } else if (voice.contains("Xiaoxiao") || voice.contains("Xiaoyi") || voice.contains("Xiaoni")) {
+                        pitch = 1.08f;
+                    }
+                }
+                textToSpeech.setPitch(pitch);
+
                 int code = textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "HanziTTS_" + System.currentTimeMillis());
-                Log.d(TAG, "TextToSpeech.speak called for '" + text + "', result code: " + code);
+                Log.d(TAG, "TextToSpeech.speak called for '" + text + "', rate: " + speechRate + ", pitch: " + pitch + ", result code: " + code);
             } catch (Exception e) {
                 Log.e(TAG, "Error during textToSpeech.speak", e);
             }
         }
+    }
+
+    @JavascriptInterface
+    public void showKeyboard() {
+        mainHandler.post(() -> {
+            try {
+                android.view.inputmethod.InputMethodManager imm =
+                        (android.view.inputmethod.InputMethodManager) activity.getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(webView, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                }
+            } catch (Exception ignored) {}
+        });
     }
 
     @JavascriptInterface
