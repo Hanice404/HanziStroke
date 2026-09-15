@@ -13,6 +13,8 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import android.content.Intent;
+import android.net.Uri;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -154,6 +156,20 @@ public class AndroidVoiceBridge {
         if (message == null) return;
         String safeMsg = message.replace("\\", "\\\\").replace("'", "\\'");
         callJs("window.showCustomToast && window.showCustomToast('" + safeMsg + "', 'info');");
+    }
+
+    @JavascriptInterface
+    public void openBrowser(String url) {
+        if (url == null || url.trim().isEmpty()) return;
+        mainHandler.post(() -> {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.trim()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(intent);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to open URL in browser: " + url, e);
+            }
+        });
     }
 
     @JavascriptInterface

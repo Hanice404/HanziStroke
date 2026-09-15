@@ -1719,7 +1719,7 @@
   <div class="custom-modal-card" style="max-height: 85vh; overflow-y: auto;">
     <div class="custom-modal-header">
       <div class="custom-modal-header-text">
-        <div class="custom-modal-title">系统配置 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.3-alpha</span></div>
+        <div class="custom-modal-title">系统配置 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.4</span></div>
         <div class="custom-modal-desc">自定义大模型语义提取、语音识别与发音设置</div>
       </div>
       <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeSettingsModal()">
@@ -2316,7 +2316,7 @@
     <div class="custom-modal-header">
       <img src="ic_launcher.png" alt="笔顺图标" style="width: 44px; height: 44px; border-radius: 12px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0; margin-right: 8px;">
       <div class="custom-modal-header-text">
-        <div class="custom-modal-title">笔顺 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.3-alpha</span></div>
+        <div class="custom-modal-title">笔顺 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.4</span></div>
         <div class="custom-modal-desc">汉字书写笔顺动画与教学发音助手</div>
       </div>
       <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeAppInfoModal()">
@@ -2343,6 +2343,71 @@
   <div class="app-info-footer-outside" style="margin-top: 18px; text-align: center; color: rgba(255, 255, 255, 0.9); font-size: 12px; line-height: 1.65; pointer-events: none; text-shadow: 0 1px 3px rgba(0,0,0,0.4); user-select: none;">
     <div style="font-weight: 500;">Designed and developed by Harper &amp; Harper's dad.</div>
     <div style="opacity: 0.8; font-size: 11px; margin-top: 2px;">© 2026 Harper. All rights reserved.</div>
+  </div>
+</div>
+
+<!-- 通用二次确认弹窗 -->
+<div id="custom-confirm-modal" class="custom-modal-backdrop" style="z-index: 3400;">
+  <div class="custom-modal-card">
+    <div class="custom-modal-header">
+      <div id="confirm-modal-icon-box" style="width: 40px; height: 40px; border-radius: 12px; background: #fff1f2; display: flex; align-items: center; justify-content: center; color: #e11d48; flex-shrink: 0; margin-right: 6px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <div class="custom-modal-header-text">
+        <div class="custom-modal-title" id="confirm-modal-title">确认恢复默认配置？</div>
+        <div class="custom-modal-desc" id="confirm-modal-desc">此操作将重置大模型端点、API 密钥与发音人等设置。</div>
+      </div>
+      <button type="button" class="custom-modal-close" id="btn-confirm-modal-close" title="关闭" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="custom-modal-actions" style="margin-top: 20px;">
+      <button type="button" class="btn-modal-cancel" id="btn-confirm-modal-cancel">取消</button>
+      <button type="button" class="btn-modal-confirm" id="btn-confirm-modal-confirm" style="background: #e11d48; color: #ffffff;">确认恢复</button>
+    </div>
+  </div>
+</div>
+
+<!-- 应用更新提示弹窗 -->
+<div id="app-update-modal" class="custom-modal-backdrop" style="z-index: 3400;">
+  <div class="custom-modal-card">
+    <div class="custom-modal-header">
+      <div style="width: 42px; height: 42px; border-radius: 12px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2563eb; flex-shrink: 0; margin-right: 6px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width: 22px; height: 22px;">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+      </div>
+      <div class="custom-modal-header-text">
+        <div class="custom-modal-title" id="update-modal-title">发现新版本</div>
+        <div class="custom-modal-desc">GitHub 官方发行版更新</div>
+      </div>
+      <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeAppUpdateModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    
+    <div style="margin-top: 14px; background: #f8fafc; border-radius: 12px; padding: 14px; border: 1px solid var(--border-color); text-align: left;">
+      <div style="font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 6px;">更新内容：</div>
+      <div id="update-modal-body" style="font-size: 12.5px; color: #475569; line-height: 1.6; max-height: 160px; overflow-y: auto; white-space: pre-wrap;"></div>
+    </div>
+
+    <div class="custom-modal-actions" style="margin-top: 18px;">
+      <button type="button" class="btn-modal-cancel" onclick="closeAppUpdateModal()">稍后提醒</button>
+      <button type="button" class="btn-modal-confirm" id="btn-update-download" style="background: #2563eb; color: #ffffff;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 15px; height: 15px; margin-right: 4px;">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>立即下载更新</span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -2504,6 +2569,45 @@
     btnCancel.onclick = () => {
       cleanup();
     };
+  }
+
+  function showCustomConfirmDialog({ title, desc, confirmText = '确定', cancelText = '取消', isDanger = false, onConfirm }) {
+    const modal = document.getElementById('custom-confirm-modal');
+    const titleEl = document.getElementById('confirm-modal-title');
+    const descEl = document.getElementById('confirm-modal-desc');
+    const btnConfirm = document.getElementById('btn-confirm-modal-confirm');
+    const btnCancel = document.getElementById('btn-confirm-modal-cancel');
+    const btnClose = document.getElementById('btn-confirm-modal-close');
+    const iconBox = document.getElementById('confirm-modal-icon-box');
+
+    if (titleEl) titleEl.textContent = title;
+    if (descEl) descEl.textContent = desc;
+    if (btnConfirm) {
+      btnConfirm.textContent = confirmText;
+      btnConfirm.style.background = isDanger ? '#e11d48' : '#0f172a';
+      btnConfirm.style.color = '#ffffff';
+    }
+    if (btnCancel) btnCancel.textContent = cancelText;
+    if (iconBox) {
+      iconBox.style.background = isDanger ? '#fff1f2' : '#f1f5f9';
+      iconBox.style.color = isDanger ? '#e11d48' : '#0f172a';
+    }
+
+    modal.classList.add('show');
+
+    const cleanup = () => {
+      modal.classList.remove('show');
+      btnConfirm.onclick = null;
+      btnCancel.onclick = null;
+      btnClose.onclick = null;
+    };
+
+    btnConfirm.onclick = () => {
+      cleanup();
+      if (onConfirm) onConfirm();
+    };
+    btnCancel.onclick = cleanup;
+    btnClose.onclick = cleanup;
   }
 
   const EYE_OFF_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
@@ -4120,7 +4224,7 @@
 
   // 设置弹窗/选择器弹窗：点击空白处不关闭弹窗
 
-  document.getElementById('btn-reset-cfg').addEventListener('click', () => {
+  function resetConfigToDefault() {
     document.getElementById('cfg-url').value = DEFAULT_CONFIG.url;
     document.getElementById('cfg-key').value = DEFAULT_CONFIG.key;
     document.getElementById('cfg-model').value = DEFAULT_CONFIG.model;
@@ -4148,6 +4252,20 @@
       }
     });
     resetPasswordVisibility('cfg-admin-pwd', 'toggle-cfg-admin-pwd');
+  }
+
+  document.getElementById('btn-reset-cfg').addEventListener('click', () => {
+    showCustomConfirmDialog({
+      title: '恢复默认配置',
+      desc: '确定要恢复默认配置吗？当前的大模型端点、API 密钥与发音人等自定义设置将被重置。',
+      confirmText: '确认恢复',
+      cancelText: '取消',
+      isDanger: true,
+      onConfirm: () => {
+        resetConfigToDefault();
+        showCustomToast('已恢复为默认配置', 'info');
+      }
+    });
   });
 
   document.getElementById('btn-save-cfg').addEventListener('click', () => {
@@ -4185,17 +4303,116 @@
     if (appInfoModal) appInfoModal.classList.remove('show');
   }
 
-  function checkAppUpdate() {
+  const CURRENT_APP_VERSION = '1.0.4';
+
+  function compareSemver(v1, v2) {
+    const clean = (v) => (v || '').replace(/^v/i, '').trim();
+    const s1 = clean(v1);
+    const s2 = clean(v2);
+    const [main1, pre1] = s1.split('-');
+    const [main2, pre2] = s2.split('-');
+    const p1 = main1.split('.').map(n => parseInt(n, 10) || 0);
+    const p2 = main2.split('.').map(n => parseInt(n, 10) || 0);
+    for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
+      const n1 = p1[i] || 0;
+      const n2 = p2[i] || 0;
+      if (n1 > n2) return 1;
+      if (n1 < n2) return -1;
+    }
+    if (!pre1 && pre2) return 1;
+    if (pre1 && !pre2) return -1;
+    if (pre1 && pre2) return pre1.localeCompare(pre2);
+    return 0;
+  }
+
+  let latestUpdateUrl = '';
+
+  function openAppUpdateModal(version, notes, downloadUrl) {
+    const modal = document.getElementById('app-update-modal');
+    const titleEl = document.getElementById('update-modal-title');
+    const bodyEl = document.getElementById('update-modal-body');
+    const btnDownload = document.getElementById('btn-update-download');
+    latestUpdateUrl = downloadUrl;
+
+    if (titleEl) titleEl.textContent = `发现新版本 ${version}`;
+    if (bodyEl) bodyEl.textContent = notes || '修复已知问题，优化使用体验。';
+    if (btnDownload) {
+      btnDownload.onclick = () => {
+        closeAppUpdateModal();
+        if (latestUpdateUrl) {
+          openExternalUrl(latestUpdateUrl);
+        }
+      };
+    }
+    if (modal) modal.classList.add('show');
+  }
+
+  function closeAppUpdateModal() {
+    const modal = document.getElementById('app-update-modal');
+    if (modal) modal.classList.remove('show');
+  }
+
+  function openExternalUrl(url) {
+    if (!url) return;
+    if (window.AndroidVoiceBridge && typeof window.AndroidVoiceBridge.openBrowser === 'function') {
+      window.AndroidVoiceBridge.openBrowser(url);
+    } else {
+      window.open(url, '_blank');
+    }
+  }
+
+  async function checkAppUpdate() {
     const btn = document.getElementById('btn-check-update');
+    const origText = btn ? btn.innerHTML : '';
     if (btn) {
-      const origText = btn.innerHTML;
       btn.innerHTML = '<span>检查中...</span>';
       btn.style.opacity = '0.7';
-      setTimeout(() => {
+      btn.disabled = true;
+    }
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch('https://api.github.com/repos/Hanice404/HanziStroke/releases', {
+        headers: { 'Accept': 'application/vnd.github.v3+json' },
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const releases = await res.json();
+      if (!Array.isArray(releases) || releases.length === 0) {
+        showCustomToast(`当前已是最新版本 v${CURRENT_APP_VERSION}`, 'success');
+        return;
+      }
+
+      const validReleases = releases.filter(r => !r.draft);
+      if (validReleases.length === 0) {
+        showCustomToast(`当前已是最新版本 v${CURRENT_APP_VERSION}`, 'success');
+        return;
+      }
+
+      validReleases.sort((a, b) => compareSemver(b.tag_name, a.tag_name));
+      const latest = validReleases[0];
+
+      if (compareSemver(latest.tag_name, CURRENT_APP_VERSION) > 0) {
+        const apkAsset = (latest.assets || []).find(a => a.name && a.name.endsWith('.apk'));
+        const downloadUrl = apkAsset ? apkAsset.browser_download_url : latest.html_url;
+        openAppUpdateModal(latest.tag_name, latest.body, downloadUrl);
+      } else {
+        showCustomToast(`当前已是最新版本 v${CURRENT_APP_VERSION}`, 'success');
+      }
+    } catch (err) {
+      console.warn('Check update error:', err);
+      showCustomToast('检查更新超时或失败，请稍后重试', 'error');
+    } finally {
+      if (btn) {
         btn.innerHTML = origText;
         btn.style.opacity = '1';
-        showCustomToast('当前已是最新版本 v1.0.3-alpha', 'success');
-      }, 800);
+        btn.disabled = false;
+      }
     }
   }
 
