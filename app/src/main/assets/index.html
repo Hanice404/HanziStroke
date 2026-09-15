@@ -22,7 +22,17 @@
       --grid-dash-color: rgba(203, 213, 225, 0.7);
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    input, textarea {
+      -webkit-user-select: auto;
+      user-select: auto;
+    }
     body {
       margin: 0;
       padding: 0;
@@ -1023,15 +1033,22 @@
       flex-direction: column;
       gap: 3px;
       text-align: left;
+      min-width: 0;
+      flex: 1;
     }
     .custom-select-trigger-title {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       color: #0f172a;
+      white-space: nowrap;
     }
     .custom-select-trigger-desc {
-      font-size: 12px;
+      font-size: 11.5px;
       color: #64748b;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 220px;
     }
     .custom-select-trigger-right {
       display: flex;
@@ -1069,13 +1086,13 @@
     .asr-provider-modal-backdrop, .tts-voice-modal-backdrop {
       z-index: 3500;
     }
-    .asr-options-list, .voice-options-list {
+    .asr-options-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
       margin-top: 14px;
     }
-    .asr-option-item, .voice-option-item {
+    .asr-option-item {
       display: flex;
       align-items: center;
       gap: 14px;
@@ -1278,7 +1295,14 @@
 
     /* 设置表单与折叠卡片 */
     .form-group { margin-bottom: 14px; text-align: left; }
-    .form-label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; }
+    .form-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+      white-space: nowrap;
+    }
     
     .settings-accordion {
       display: flex;
@@ -1317,6 +1341,8 @@
       align-items: center;
       gap: 10px;
       text-align: left;
+      min-width: 0;
+      flex: 1;
     }
     .settings-group-icon {
       width: 32px;
@@ -1341,17 +1367,21 @@
     .settings-group-title-wrap {
       display: flex;
       flex-direction: column;
+      white-space: nowrap;
+      min-width: 0;
     }
     .settings-group-title {
       font-size: 13.5px;
       font-weight: 700;
       color: #0f172a;
       line-height: 1.3;
+      white-space: nowrap;
     }
     .settings-group-subtitle {
       font-size: 11px;
       color: #64748b;
       margin-top: 1px;
+      white-space: nowrap;
     }
     .settings-group-right {
       display: flex;
@@ -1675,7 +1705,7 @@
   <div class="custom-modal-card" style="max-height: 85vh; overflow-y: auto;">
     <div class="custom-modal-header">
       <div class="custom-modal-header-text">
-        <div class="custom-modal-title">系统配置 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.1</span></div>
+        <div class="custom-modal-title">系统配置 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.2</span></div>
         <div class="custom-modal-desc">自定义大模型语义提取、语音识别与发音设置</div>
       </div>
       <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeSettingsModal()">
@@ -1839,16 +1869,23 @@
           </div>
           <div class="form-group">
             <label class="form-label">发音语速调节</label>
-            <select id="cfg-tts-rate" class="form-input">
-              <option value="-20%">慢速 (-20%) · 适合逐笔慢读跟读</option>
-              <option value="-10%">稍缓 (-10%) · 推荐字词教学发音</option>
-              <option value="+0%">标准 (0%) · 正常生活语速</option>
-              <option value="+15%">稍快 (+15%)</option>
-            </select>
+            <div id="tts-rate-trigger" class="custom-select-trigger" onclick="openTtsRateSelectModal()">
+              <div class="custom-select-trigger-content">
+                <span id="tts-rate-trigger-title" class="custom-select-trigger-title">稍缓 (-10%) · 字词教学推荐</span>
+                <span id="tts-rate-trigger-desc" class="custom-select-trigger-desc">推荐字词教学发音 · 语速自然清晰</span>
+              </div>
+              <div class="custom-select-trigger-right">
+                <span id="tts-rate-trigger-badge" class="custom-select-badge badge-rec">推荐</span>
+                <svg class="custom-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </div>
+            <input type="hidden" id="cfg-tts-rate" value="-10%">
           </div>
           <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; margin-bottom: 8px; background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 12px; color: #475569; font-weight: 500;">试听当前选择的声音效果</div>
-            <button type="button" id="btn-test-tts" onclick="testTtsVoice()" style="background: #0f172a; color: #ffffff; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            <div style="font-size: 12px; color: #475569; font-weight: 500; white-space: nowrap;">试听当前选择的声音效果</div>
+            <button type="button" id="btn-test-tts" onclick="testTtsVoice()" style="background: #0f172a; color: #ffffff; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
               <svg viewBox="0 0 24 24" fill="currentColor" style="width: 14px; height: 14px;"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
               <span>试听发音</span>
             </button>
@@ -2150,13 +2187,122 @@
   </div>
 </div>
 
+<!-- 4. 语速选择弹窗 (适配主样式) -->
+<div id="tts-rate-modal" class="custom-modal-backdrop" style="z-index: 3250;">
+  <div class="custom-modal-card" style="max-height: 80vh; display: flex; flex-direction: column;">
+    <div class="custom-modal-header">
+      <div class="custom-modal-header-text">
+        <div class="custom-modal-title">发音语速调节</div>
+        <div class="custom-modal-desc">为汉字朗读和发音教学设置合适的朗读语速</div>
+      </div>
+      <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeTtsRateSelectModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <div class="rate-options-list" id="tts-rate-options-list">
+      <div class="rate-option-item" id="rate-opt-20" onclick="selectTtsRate('-20%')">
+        <div class="voice-opt-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="voice-opt-info">
+          <div class="voice-opt-name-row">
+            <span class="voice-opt-name">慢速 (-20%)</span>
+            <span class="voice-opt-tag">适合慢读跟读</span>
+            <span class="voice-opt-badge badge-custom">极慢</span>
+          </div>
+          <div class="voice-opt-desc">节奏舒缓 · 适合低龄儿童逐笔慢读跟读</div>
+        </div>
+        <div class="voice-opt-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="rate-option-item is-selected" id="rate-opt-10" onclick="selectTtsRate('-10%')">
+        <div class="voice-opt-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </div>
+        <div class="voice-opt-info">
+          <div class="voice-opt-name-row">
+            <span class="voice-opt-name">稍缓 (-10%)</span>
+            <span class="voice-opt-tag">字词教学推荐</span>
+            <span class="voice-opt-badge badge-rec">推荐</span>
+          </div>
+          <div class="voice-opt-desc">推荐字词教学发音 · 语速自然清晰</div>
+        </div>
+        <div class="voice-opt-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="rate-option-item" id="rate-opt-0" onclick="selectTtsRate('+0%')">
+        <div class="voice-opt-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="voice-opt-info">
+          <div class="voice-opt-name-row">
+            <span class="voice-opt-name">标准 (0%)</span>
+            <span class="voice-opt-tag">正常生活语速</span>
+            <span class="voice-opt-badge badge-custom">标准</span>
+          </div>
+          <div class="voice-opt-desc">日常对话正常语速 · 适合普通流畅朗读</div>
+        </div>
+        <div class="voice-opt-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="rate-option-item" id="rate-opt-15" onclick="selectTtsRate('+15%')">
+        <div class="voice-opt-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div class="voice-opt-info">
+          <div class="voice-opt-name-row">
+            <span class="voice-opt-name">稍快 (+15%)</span>
+            <span class="voice-opt-tag">快速浏览查词</span>
+            <span class="voice-opt-badge badge-custom">稍快</span>
+          </div>
+          <div class="voice-opt-desc">节奏紧凑 · 适合大龄儿童快速查询查词</div>
+        </div>
+        <div class="voice-opt-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="custom-modal-actions" style="margin-top: 18px;">
+      <button type="button" class="btn-modal-confirm" style="flex: 1;" onclick="closeTtsRateSelectModal()">完成</button>
+    </div>
+  </div>
+</div>
+
 <!-- 应用介绍与检查更新弹窗 -->
 <div id="app-info-modal" class="custom-modal-backdrop" style="z-index: 3300; flex-direction: column;">
   <div class="custom-modal-card">
     <div class="custom-modal-header">
       <img src="ic_launcher.png" alt="笔顺图标" style="width: 44px; height: 44px; border-radius: 12px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0; margin-right: 8px;">
       <div class="custom-modal-header-text">
-        <div class="custom-modal-title">笔顺 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.1</span></div>
+        <div class="custom-modal-title">笔顺 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.2</span></div>
         <div class="custom-modal-desc">汉字书写笔顺动画与教学发音助手</div>
       </div>
       <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeAppInfoModal()">
@@ -2170,7 +2316,6 @@
       <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1; font-size: 12px; color: #64748b; line-height: 1.75;">
         <div style="font-weight: 600; color: #475569; margin-bottom: 2px;">使用以下引擎驱动：</div>
         <div>DeepSeek V4、Tencent ASR、Microsoft TTS</div>
-        <div style="margin-top: 6px; font-size: 11.5px; color: #64748b;"><span style="color: var(--primary-color); font-weight: 600;">v1.0.1 更新说明：</span>更换内置大模型 AIP 地址。修复已知 BUG。</div>
       </div>
     </div>
 
@@ -2552,6 +2697,16 @@
     });
   }
 
+  function restoreVoiceStatusText() {
+    const statusEl = document.getElementById('voice-status');
+    if (!statusEl) return;
+    if (!document.getElementById('page-container').classList.contains('is-initial')) {
+      statusEl.innerText = '再次语音查询';
+    } else {
+      statusEl.innerText = '';
+    }
+  }
+
   function resetVoiceUI() {
     isRecording = false;
     isPressHolding = false;
@@ -2568,12 +2723,7 @@
     document.getElementById('voice-section').classList.remove('is-pressing');
     document.getElementById('icon-mic').style.display = 'block';
     document.getElementById('icon-loading').style.display = 'none';
-    const statusEl = document.getElementById('voice-status');
-    if (!document.getElementById('page-container').classList.contains('is-initial')) {
-      statusEl.innerText = '再次语音查询';
-    } else {
-      statusEl.innerText = '';
-    }
+    restoreVoiceStatusText();
   }
 
   function startTimer() {
@@ -2862,7 +3012,7 @@
       renderCharacters(targetChars);
     } else {
       showCustomToast('未能分析出要查的汉字，请输入具体字词', 'info');
-      statusText.innerText = '';
+      restoreVoiceStatusText();
     }
   }
   window.processRecordedAudioText = processTextInput;
@@ -3106,7 +3256,7 @@
           renderCharacters(targetChars);
         } else {
           showCustomToast('未能分析出目标汉字，请说例如：“图书馆的图怎么写”', 'info');
-          statusText.innerText = '';
+          restoreVoiceStatusText();
         }
       } else {
         throw new Error('未能识别到有效语音内容');
@@ -3117,14 +3267,15 @@
       } else {
         console.error('Audio recognition failed:', err);
         showCustomToast(err.message || '未能识别出语音，请清晰说出要查的字', 'error');
-        statusText.innerText = '';
       }
+      restoreVoiceStatusText();
     } finally {
       btnMic.classList.remove('thinking');
       iconMic.style.display = 'block';
       iconLoading.style.display = 'none';
       document.getElementById('btn-cancel-recognition').style.display = 'none';
       currentFetchController = null;
+      restoreVoiceStatusText();
     }
   }
 
@@ -3695,6 +3846,87 @@
     if (val) updateTtsVoiceDisplay(val);
   }
 
+  const TTS_RATE_CONFIGS = [
+    {
+      id: '-20%',
+      name: '慢速 (-20%)',
+      tag: '适合慢读跟读',
+      badge: '极慢',
+      badgeType: 'custom',
+      desc: '节奏舒缓 · 适合低龄儿童逐笔慢读跟读'
+    },
+    {
+      id: '-10%',
+      name: '稍缓 (-10%)',
+      tag: '字词教学推荐',
+      badge: '推荐',
+      badgeType: 'rec',
+      desc: '推荐字词教学发音 · 语速自然清晰'
+    },
+    {
+      id: '+0%',
+      name: '标准 (0%)',
+      tag: '正常生活语速',
+      badge: '标准',
+      badgeType: 'custom',
+      desc: '日常对话正常语速 · 适合普通流畅朗读'
+    },
+    {
+      id: '+15%',
+      name: '稍快 (+15%)',
+      tag: '快速浏览查词',
+      badge: '稍快',
+      badgeType: 'custom',
+      desc: '节奏紧凑 · 适合大龄儿童快速查询查词'
+    }
+  ];
+
+  function updateTtsRateDisplay(rateVal) {
+    const rCfg = TTS_RATE_CONFIGS.find(r => r.id === rateVal) || TTS_RATE_CONFIGS[1];
+    const hiddenInput = document.getElementById('cfg-tts-rate');
+    if (hiddenInput) hiddenInput.value = rCfg.id;
+
+    const titleEl = document.getElementById('tts-rate-trigger-title');
+    const descEl = document.getElementById('tts-rate-trigger-desc');
+    const badgeEl = document.getElementById('tts-rate-trigger-badge');
+
+    if (titleEl) titleEl.textContent = `${rCfg.name} · ${rCfg.tag}`;
+    if (descEl) descEl.textContent = rCfg.desc;
+    if (badgeEl) {
+      badgeEl.textContent = rCfg.badge;
+      badgeEl.className = `custom-select-badge badge-${rCfg.badgeType}`;
+    }
+
+    TTS_RATE_CONFIGS.forEach(r => {
+      const optKey = r.id.replace(/[%+]/g, '');
+      const optEl = document.getElementById(`rate-opt-${optKey}`);
+      if (optEl) {
+        if (r.id === rCfg.id) {
+          optEl.classList.add('is-selected');
+        } else {
+          optEl.classList.remove('is-selected');
+        }
+      }
+    });
+  }
+
+  function openTtsRateSelectModal() {
+    const modal = document.getElementById('tts-rate-modal');
+    if (modal) modal.classList.add('show');
+  }
+
+  function closeTtsRateSelectModal() {
+    const modal = document.getElementById('tts-rate-modal');
+    if (modal) modal.classList.remove('show');
+  }
+
+  function selectTtsRate(rateVal) {
+    updateTtsRateDisplay(rateVal);
+    setTimeout(() => {
+      closeTtsRateSelectModal();
+    }, 150);
+  }
+
   // 试听微软 TTS 发音
   function testTtsVoice() {
     const voice = document.getElementById('cfg-tts-voice')?.value || 'zh-CN-XiaoxiaoNeural';
@@ -3741,7 +3973,7 @@
     document.getElementById('cfg-asr-model').value = AI_CONFIG.asrModel || DEFAULT_CONFIG.asrModel;
 
     updateTtsVoiceDisplay(AI_CONFIG.ttsVoice || DEFAULT_CONFIG.ttsVoice || 'zh-CN-XiaoxiaoNeural');
-    document.getElementById('cfg-tts-rate').value = AI_CONFIG.ttsRate || DEFAULT_CONFIG.ttsRate || '-10%';
+    updateTtsRateDisplay(AI_CONFIG.ttsRate || DEFAULT_CONFIG.ttsRate || '-10%');
 
     document.getElementById('cfg-admin-pwd').value = AI_CONFIG.adminPassword || DEFAULT_CONFIG.adminPassword || '1221';
 
@@ -3772,9 +4004,7 @@
     settingsAuthModal.classList.remove('show');
   });
 
-  settingsAuthModal.addEventListener('click', (e) => {
-    if (e.target === settingsAuthModal) settingsAuthModal.classList.remove('show');
-  });
+  // 点击空白处不关闭弹窗（移除了 backdrop click 关闭行为）
 
   function verifyAndEnterSettings() {
     const entered = authPwdInput.value.trim();
@@ -3802,23 +4032,7 @@
     }
   });
 
-  settingsModal.addEventListener('click', (e) => {
-    if (e.target === settingsModal) settingsModal.classList.remove('show');
-  });
-
-  const asrModal = document.getElementById('asr-provider-modal');
-  if (asrModal) {
-    asrModal.addEventListener('click', (e) => {
-      if (e.target === asrModal) closeAsrProviderSelectModal();
-    });
-  }
-
-  const ttsModal = document.getElementById('tts-voice-modal');
-  if (ttsModal) {
-    ttsModal.addEventListener('click', (e) => {
-      if (e.target === ttsModal) closeTtsVoiceSelectModal();
-    });
-  }
+  // 设置弹窗/选择器弹窗：点击空白处不关闭弹窗
 
   document.getElementById('btn-reset-cfg').addEventListener('click', () => {
     document.getElementById('cfg-url').value = DEFAULT_CONFIG.url;
@@ -3835,7 +4049,7 @@
     document.getElementById('cfg-asr-model').value = DEFAULT_CONFIG.asrModel;
 
     updateTtsVoiceDisplay(DEFAULT_CONFIG.ttsVoice);
-    document.getElementById('cfg-tts-rate').value = DEFAULT_CONFIG.ttsRate;
+    updateTtsRateDisplay(DEFAULT_CONFIG.ttsRate);
 
     document.getElementById('cfg-admin-pwd').value = DEFAULT_CONFIG.adminPassword;
 
@@ -3885,12 +4099,6 @@
     if (appInfoModal) appInfoModal.classList.remove('show');
   }
 
-  if (appInfoModal) {
-    appInfoModal.addEventListener('click', (e) => {
-      if (e.target === appInfoModal) closeAppInfoModal();
-    });
-  }
-
   function checkAppUpdate() {
     const btn = document.getElementById('btn-check-update');
     if (btn) {
@@ -3900,7 +4108,7 @@
       setTimeout(() => {
         btn.innerHTML = origText;
         btn.style.opacity = '1';
-        showCustomToast('当前已是最新版本 v1.0.1 (更换内置大模型 AIP 地址。修复已知 BUG。)', 'success');
+        showCustomToast('当前已是最新版本 v1.0.2', 'success');
       }, 800);
     }
   }
@@ -3913,10 +4121,16 @@
     }
   });
 
+  // 全局禁用默认长按菜单（除麦克风按钮按住说话外）
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+  }, { passive: false });
+
   window.addEventListener('DOMContentLoaded', () => {
     checkModelConnection();
     updateAsrProviderDisplay(AI_CONFIG.asrProvider || DEFAULT_CONFIG.asrProvider);
     updateTtsVoiceDisplay(AI_CONFIG.ttsVoice || DEFAULT_CONFIG.ttsVoice);
+    updateTtsRateDisplay(AI_CONFIG.ttsRate || DEFAULT_CONFIG.ttsRate);
   });
 </script>
 </body>

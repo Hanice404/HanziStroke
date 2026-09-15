@@ -59,6 +59,16 @@ public class MainActivity extends AppCompatActivity {
             WebView.setWebContentsDebuggingEnabled(true);
         }
 
+        // 禁用除麦克风按钮之外的系统长按选中文本/放大镜交互
+        webView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
+        webView.setLongClickable(false);
+        webView.setHapticFeedbackEnabled(false);
+
         voiceBridge = new AndroidVoiceBridge(this, webView);
         webView.addJavascriptInterface(voiceBridge, "AndroidVoiceBridge");
 
