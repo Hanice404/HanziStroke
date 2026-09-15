@@ -1,4 +1,4 @@
-# 笔顺 (HanziStroke) · v1.0.0
+# 笔顺 (HanziStroke) · v1.0.1
 
 <p align="center">
   <img src="ic_launcher.png" width="100" height="100" alt="笔顺 Logo" style="border-radius: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);" />
@@ -9,13 +9,13 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Hanice404/HanziStroke/releases/tag/v1.0.0">
-    <img src="https://img.shields.io/badge/Release-v1.0.0-blue.svg?style=flat-square" alt="Version">
+  <a href="https://github.com/Hanice404/HanziStroke/releases/tag/v1.0.1">
+    <img src="https://img.shields.io/badge/Release-v1.0.1-blue.svg?style=flat-square" alt="Version">
   </a>
   <img src="https://img.shields.io/badge/Platform-Android-green.svg?style=flat-square" alt="Platform">
   <img src="https://img.shields.io/badge/LLM-DeepSeek%20V4-orange.svg?style=flat-square" alt="LLM">
-  <img src="https://img.shields.io/badge/ASR-Tencent%20Cloud-blue.svg?style=flat-square" alt="ASR">
-  <img src="https://img.shields.io/badge/TTS-Microsoft%20Neural-purple.svg?style=flat-square" alt="TTS">
+  <img src="https://img.shields.io/badge/ASR-Tencent%20ASR-blue.svg?style=flat-square" alt="ASR">
+  <img src="https://img.shields.io/badge/TTS-Microsoft%20TTS-purple.svg?style=flat-square" alt="TTS">
 </p>
 
 ---
@@ -40,14 +40,14 @@
 ## ⚙️ 驱动引擎
 
 - **语义大模型**：DeepSeek V4
-- **语音识别模型**：Tencent ASR / FunAudioLLM SenseVoice
-- **真人发音引擎**：Microsoft Neural TTS
+- **语音识别模型**：Tencent ASR
+- **真人发音引擎**：Microsoft TTS
 
 ## 🚀 下载与安装
 
-请前往 [Releases 页面](https://github.com/Hanice404/HanziStroke/releases/tag/v1.0.0) 下载最新版本的 APK 安装包：
+请前往 [Releases 页面](https://github.com/Hanice404/HanziStroke/releases/tag/v1.0.1) 下载最新版本的 APK 安装包：
 
-- **[笔顺_v1.0.0.apk](https://github.com/Hanice404/HanziStroke/releases/download/v1.0.0/%E7%AC%94%E9%A1%BA_v1.0.0.apk)**
+- **[笔顺_v1.0.1.apk (HanziStroke_v1.0.1.apk)](https://github.com/Hanice404/HanziStroke/releases/download/v1.0.1/HanziStroke_v1.0.1.apk)**
 
 ## 🛠️ 项目构建
 

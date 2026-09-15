@@ -220,6 +220,14 @@
     .status-dropdown-refresh svg {
       width: 12px;
       height: 12px;
+      transition: transform 0.2s;
+    }
+    .status-dropdown-refresh.is-spinning svg {
+      animation: spin-refresh 0.8s linear infinite;
+    }
+    @keyframes spin-refresh {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
     .service-status-list {
       display: flex;
@@ -1484,7 +1492,7 @@
       <div class="service-status-dropdown" id="service-status-dropdown" onclick="event.stopPropagation()">
         <div class="status-dropdown-header">
           <span class="status-dropdown-title">服务运行状态</span>
-          <button type="button" class="status-dropdown-refresh" onclick="refreshAllServiceStatus()">
+          <button type="button" class="status-dropdown-refresh" id="btn-refresh-status" onclick="refreshAllServiceStatus(event)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
             <span>刷新</span>
           </button>
@@ -1493,31 +1501,31 @@
           <div class="service-status-item">
             <div class="service-status-info">
               <span class="service-status-name">语义理解大模型 (LLM)</span>
-              <span class="service-status-sub" id="status-sub-llm">分析提取目标汉字</span>
+              <span class="service-status-sub" id="status-sub-llm">DeepSeek-V4</span>
             </div>
             <div class="service-status-pill checking" id="status-pill-llm">
               <div class="pill-dot"></div>
-              <span id="status-text-llm">检查中</span>
+              <span id="status-text-llm">检测中</span>
             </div>
           </div>
           <div class="service-status-item">
             <div class="service-status-info">
               <span class="service-status-name">语音转文字 (ASR)</span>
-              <span class="service-status-sub" id="status-sub-asr">腾讯云 / OpenAI</span>
+              <span class="service-status-sub" id="status-sub-asr">Tencent ASR</span>
             </div>
             <div class="service-status-pill online" id="status-pill-asr">
               <div class="pill-dot"></div>
-              <span id="status-text-asr">就绪</span>
+              <span id="status-text-asr">就绪正常</span>
             </div>
           </div>
           <div class="service-status-item">
             <div class="service-status-info">
               <span class="service-status-name">汉字发音 (TTS)</span>
-              <span class="service-status-sub" id="status-sub-tts">微软神经网络语音</span>
+              <span class="service-status-sub" id="status-sub-tts">Microsoft TTS</span>
             </div>
             <div class="service-status-pill online" id="status-pill-tts">
               <div class="pill-dot"></div>
-              <span id="status-text-tts">就绪</span>
+              <span id="status-text-tts">就绪正常</span>
             </div>
           </div>
         </div>
@@ -1667,7 +1675,7 @@
   <div class="custom-modal-card" style="max-height: 85vh; overflow-y: auto;">
     <div class="custom-modal-header">
       <div class="custom-modal-header-text">
-        <div class="custom-modal-title">系统配置 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.0</span></div>
+        <div class="custom-modal-title">系统配置 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.1</span></div>
         <div class="custom-modal-desc">自定义大模型语义提取、语音识别与发音设置</div>
       </div>
       <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeSettingsModal()">
@@ -1701,7 +1709,7 @@
         <div class="settings-group-body">
           <div class="form-group">
             <label class="form-label">API 端点 (LLM Endpoint)</label>
-            <input type="text" id="cfg-url" class="form-input" placeholder="https://wishub-x6.ctyun.cn/v1">
+            <input type="text" id="cfg-url" class="form-input" placeholder="https://api.hanice.vip/v1">
           </div>
           <div class="form-group">
             <label class="form-label">API Key</label>
@@ -2148,7 +2156,7 @@
     <div class="custom-modal-header">
       <img src="ic_launcher.png" alt="笔顺图标" style="width: 44px; height: 44px; border-radius: 12px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0; margin-right: 8px;">
       <div class="custom-modal-header-text">
-        <div class="custom-modal-title">笔顺 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.0</span></div>
+        <div class="custom-modal-title">笔顺 <span style="font-size: 13px; font-weight: normal; color: #94a3b8;">v1.0.1</span></div>
         <div class="custom-modal-desc">汉字书写笔顺动画与教学发音助手</div>
       </div>
       <button type="button" class="custom-modal-close" title="关闭" aria-label="关闭" onclick="closeAppInfoModal()">
@@ -2162,6 +2170,7 @@
       <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1; font-size: 12px; color: #64748b; line-height: 1.75;">
         <div style="font-weight: 600; color: #475569; margin-bottom: 2px;">使用以下引擎驱动：</div>
         <div>DeepSeek V4、Tencent ASR、Microsoft TTS</div>
+        <div style="margin-top: 6px; font-size: 11.5px; color: #64748b;"><span style="color: var(--primary-color); font-weight: 600;">v1.0.1 更新说明：</span>更换内置大模型 AIP 地址。修复已知 BUG。</div>
       </div>
     </div>
 
@@ -2197,8 +2206,8 @@
 
   const _d = (s) => { try { return atob(s); } catch (e) { return s; } };
   const DEFAULT_CONFIG = {
-    url: 'https://wishub-x6.ctyun.cn/v1',
-    key: _d('YmRkMWE5OTZhZDQ1NDM1MjkyMjg4NjNiYmZhNDBlMWM='),
+    url: 'https://api.hanice.vip/v1',
+    key: _d('c2stbkx1Vm8xR2ZRdkhZeG5tSEZFU2FyTUNOMnRHVzFZdWRZdzRRVG9FTGFsUm1QN3Yw'),
     model: 'deepseek-v4-flash-0428',
     asrProvider: 'tencent',
     tencentSecretId: _d('QUtJREJOU1ZVSXZNYWRaTnhScDVWdDhBMVcxTWhyb1o3U2FY'),
@@ -2233,10 +2242,10 @@
         if (parsed.model === 'glm-5.1' || parsed.model === 'deepseek-v4-flash') {
           parsed.model = DEFAULT_CONFIG.model;
         }
-        if (!parsed.url || parsed.url === 'https://api.hanice.vip/v1' || parsed.url.includes('hanice.vip')) {
+        if (!parsed.url || parsed.url.includes('ctyun.cn') || parsed.url.includes('hanice.vip')) {
           parsed.url = DEFAULT_CONFIG.url;
         }
-        if (!parsed.key || parsed.key.includes('m0TXNAjI1WWDbSvyugfb6j9WaA7xcQ60O7UNnpYHhv9eEut1')) {
+        if (!parsed.key || parsed.key === 'bdd1a996ad4543529228863bbfa40e1c' || parsed.key.includes('m0TXNAjI1WWDbSvyugfb6j9WaA7xcQ60O7UNnpYHhv9eEut1')) {
           parsed.key = DEFAULT_CONFIG.key;
         }
         if (!parsed.asrKey) {
@@ -2416,23 +2425,21 @@
     if (pillLlm && textLlm) {
       pillLlm.className = `service-status-pill ${serviceStatus.llm}`;
       textLlm.innerText = serviceStatus.llm === 'online' ? '正常在线' : (serviceStatus.llm === 'offline' ? '连接异常' : '检测中');
-      if (subLlm) subLlm.innerText = AI_CONFIG.model || DEFAULT_CONFIG.model;
+      if (subLlm) subLlm.innerText = 'DeepSeek-V4';
     }
 
     // ASR
-    const asrProv = AI_CONFIG.asrProvider || DEFAULT_CONFIG.asrProvider;
     if (pillAsr && textAsr) {
       pillAsr.className = `service-status-pill ${serviceStatus.asr}`;
-      textAsr.innerText = serviceStatus.asr === 'online' ? '就绪正常' : '连接异常';
-      if (subAsr) subAsr.innerText = asrProv === 'tencent' ? '腾讯云 ASR' : 'OpenAI 兼容端点';
+      textAsr.innerText = serviceStatus.asr === 'online' ? '就绪正常' : (serviceStatus.asr === 'offline' ? '连接异常' : '检测中');
+      if (subAsr) subAsr.innerText = 'Tencent ASR';
     }
 
     // TTS
     if (pillTts && textTts) {
       pillTts.className = `service-status-pill ${serviceStatus.tts}`;
-      textTts.innerText = serviceStatus.tts === 'online' ? '就绪正常' : '不可用';
-      const vName = (AI_CONFIG.ttsVoice || DEFAULT_CONFIG.ttsVoice).replace('zh-CN-', '').replace('Neural', '');
-      if (subTts) subTts.innerText = `微软TTS (${vName})`;
+      textTts.innerText = serviceStatus.tts === 'online' ? '就绪正常' : (serviceStatus.tts === 'offline' ? '不可用' : '检测中');
+      if (subTts) subTts.innerText = 'Microsoft TTS';
     }
 
     // 顶部外显总状态：如果 LLM 和 ASR、TTS 均正常，显示“服务正常”，若有离线显示“部分离线”
@@ -2451,56 +2458,67 @@
   // 检查各大服务连接状态
   async function checkAllServiceStatus() {
     serviceStatus.llm = 'checking';
+    serviceStatus.asr = 'checking';
+    serviceStatus.tts = 'checking';
     updateServiceStatusUI();
 
     // 1. 检查 LLM 连接
-    try {
-      const endpoint = getChatCompletionsUrl(AI_CONFIG.url);
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const llmPromise = (async () => {
+      try {
+        const endpoint = getChatCompletionsUrl(AI_CONFIG.url);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-      let checkModel = AI_CONFIG.model || DEFAULT_CONFIG.model;
-      if (checkModel === 'deepseek-v4-flash') checkModel = DEFAULT_CONFIG.model;
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${AI_CONFIG.key}`
-        },
-        body: JSON.stringify({
-          model: checkModel,
-          messages: [{ role: 'user', content: 'hi' }],
-          max_tokens: 1
-        }),
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
+        let checkModel = AI_CONFIG.model || DEFAULT_CONFIG.model;
+        if (checkModel === 'deepseek-v4-flash') checkModel = DEFAULT_CONFIG.model;
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${AI_CONFIG.key}`
+          },
+          body: JSON.stringify({
+            model: checkModel,
+            messages: [{ role: 'user', content: 'hi' }],
+            max_tokens: 1
+          }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
 
-      const contentType = response.headers.get('content-type') || '';
-      if (!response.ok || !contentType.includes('application/json')) {
-        throw new Error('API 响应非 JSON 格式');
-      }
-      const data = await response.json();
-      if (data && (data.choices || data.id || data.object)) {
-        serviceStatus.llm = 'online';
-      } else {
+        const contentType = response.headers.get('content-type') || '';
+        if (!response.ok || !contentType.includes('application/json')) {
+          throw new Error('API 响应非 JSON 格式');
+        }
+        const data = await response.json();
+        if (data && (data.choices || data.id || data.object)) {
+          serviceStatus.llm = 'online';
+        } else {
+          serviceStatus.llm = 'offline';
+        }
+      } catch (e) {
         serviceStatus.llm = 'offline';
       }
-    } catch (e) {
-      serviceStatus.llm = 'offline';
-    }
+    })();
 
     // 2. 检查 ASR 状态
-    const asrProv = AI_CONFIG.asrProvider || DEFAULT_CONFIG.asrProvider;
-    if (asrProv === 'tencent') {
-      serviceStatus.asr = (AI_CONFIG.tencentSecretId && AI_CONFIG.tencentSecretKey) ? 'online' : 'offline';
-    } else {
-      serviceStatus.asr = AI_CONFIG.asrUrl ? 'online' : 'offline';
-    }
+    const asrPromise = (async () => {
+      await new Promise(r => setTimeout(r, 200));
+      const asrProv = AI_CONFIG.asrProvider || DEFAULT_CONFIG.asrProvider;
+      if (asrProv === 'tencent') {
+        serviceStatus.asr = (AI_CONFIG.tencentSecretId && AI_CONFIG.tencentSecretKey) ? 'online' : 'offline';
+      } else {
+        serviceStatus.asr = AI_CONFIG.asrUrl ? 'online' : 'offline';
+      }
+    })();
 
     // 3. 检查 TTS 状态 (支持原生 AndroidVoiceBridge 或 Web Speech)
-    serviceStatus.tts = (window.AndroidVoiceBridge || ('speechSynthesis' in window)) ? 'online' : 'offline';
+    const ttsPromise = (async () => {
+      await new Promise(r => setTimeout(r, 200));
+      serviceStatus.tts = (window.AndroidVoiceBridge || ('speechSynthesis' in window)) ? 'online' : 'offline';
+    })();
 
+    await Promise.allSettled([llmPromise, asrPromise, ttsPromise]);
     updateServiceStatusUI();
   }
 
@@ -2521,10 +2539,16 @@
     if (wrapper) wrapper.classList.remove('is-open');
   }
 
-  function refreshAllServiceStatus() {
-    showCustomToast('正在重新检测服务状态...', 'info');
+  function refreshAllServiceStatus(e) {
+    if (e) e.stopPropagation();
+    const btn = document.getElementById('btn-refresh-status');
+    if (btn) btn.classList.add('is-spinning');
+    showCustomToast('正在检测所有服务状态...', 'info');
     checkAllServiceStatus().then(() => {
+      if (btn) btn.classList.remove('is-spinning');
       showCustomToast('服务状态已更新', 'success');
+    }).catch(() => {
+      if (btn) btn.classList.remove('is-spinning');
     });
   }
 
@@ -3876,7 +3900,7 @@
       setTimeout(() => {
         btn.innerHTML = origText;
         btn.style.opacity = '1';
-        showCustomToast('当前已是最新版本 v1.0.0', 'success');
+        showCustomToast('当前已是最新版本 v1.0.1 (更换内置大模型 AIP 地址。修复已知 BUG。)', 'success');
       }, 800);
     }
   }
