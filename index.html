@@ -1446,6 +1446,11 @@
       height: 18px;
       pointer-events: none;
     }
+    .secure-key-input {
+      -webkit-text-security: disc;
+      -webkit-user-select: none;
+      user-select: none;
+    }
   </style>
 </head>
 <body>
@@ -1672,7 +1677,7 @@
 
     <div class="settings-accordion">
       <!-- 1. 语义提取大模型 -->
-      <div class="settings-group-card is-open" id="group-llm">
+      <div class="settings-group-card" id="group-llm">
         <div class="settings-group-header" onclick="toggleSettingsGroup('group-llm')">
           <div class="settings-group-left">
             <div class="settings-group-icon">
@@ -1696,19 +1701,11 @@
         <div class="settings-group-body">
           <div class="form-group">
             <label class="form-label">API 端点 (LLM Endpoint)</label>
-            <input type="text" id="cfg-url" class="form-input" placeholder="https://api.hanice.vip/v1">
+            <input type="text" id="cfg-url" class="form-input" placeholder="https://wishub-x6.ctyun.cn/v1">
           </div>
           <div class="form-group">
             <label class="form-label">API Key</label>
-            <div class="input-password-wrapper">
-              <input type="password" id="cfg-key" class="form-input" placeholder="sk-...">
-              <button type="button" class="input-toggle-eye" id="toggle-cfg-key" title="显示密钥" aria-label="显示密钥" onclick="togglePasswordVisibility('cfg-key', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-              </button>
-            </div>
+            <input type="password" id="cfg-key" class="form-input secure-key-input" placeholder="请输入 API Key" autocomplete="off" spellcheck="false" oncopy="return false;" oncut="return false;">
           </div>
           <div class="form-group">
             <label class="form-label">模型名称 (Model)</label>
@@ -1766,15 +1763,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">腾讯云 SecretKey</label>
-              <div class="input-password-wrapper">
-                <input type="password" id="cfg-tencent-key" class="form-input" placeholder="请输入腾讯云 API 密钥">
-                <button type="button" class="input-toggle-eye" id="toggle-cfg-tencent-key" title="显示密钥" aria-label="显示密钥" onclick="togglePasswordVisibility('cfg-tencent-key', this)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                  </svg>
-                </button>
-              </div>
+              <input type="password" id="cfg-tencent-key" class="form-input secure-key-input" placeholder="请输入腾讯云 API 密钥" autocomplete="off" spellcheck="false" oncopy="return false;" oncut="return false;">
             </div>
             <div class="form-group">
               <label class="form-label">服务地域 (Region)</label>
@@ -1790,15 +1779,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">ASR API Key (可选)</label>
-              <div class="input-password-wrapper">
-                <input type="password" id="cfg-asr-key" class="form-input" placeholder="sk-qufum...">
-                <button type="button" class="input-toggle-eye" id="toggle-cfg-asr-key" title="显示密钥" aria-label="显示密钥" onclick="togglePasswordVisibility('cfg-asr-key', this)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                  </svg>
-                </button>
-              </div>
+              <input type="password" id="cfg-asr-key" class="form-input secure-key-input" placeholder="请输入 ASR API Key" autocomplete="off" spellcheck="false" oncopy="return false;" oncut="return false;">
             </div>
             <div class="form-group">
               <label class="form-label">ASR 模型名称</label>
@@ -2216,8 +2197,8 @@
 
   const _d = (s) => { try { return atob(s); } catch (e) { return s; } };
   const DEFAULT_CONFIG = {
-    url: 'https://api.hanice.vip/v1',
-    key: _d('c2stbTBUWE5BakkxV1dEYlN2eXVnZmI2ajlXYUE3eGNRNjBPN1VObnBZSGh2OWVFdXQx'),
+    url: 'https://wishub-x6.ctyun.cn/v1',
+    key: _d('YmRkMWE5OTZhZDQ1NDM1MjkyMjg4NjNiYmZhNDBlMWM='),
     model: 'deepseek-v4-flash-0428',
     asrProvider: 'tencent',
     tencentSecretId: _d('QUtJREJOU1ZVSXZNYWRaTnhScDVWdDhBMVcxTWhyb1o3U2FY'),
@@ -2249,8 +2230,14 @@
       const saved = localStorage.getItem('viewword_ai_config');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.model === 'glm-5.1') {
+        if (parsed.model === 'glm-5.1' || parsed.model === 'deepseek-v4-flash') {
           parsed.model = DEFAULT_CONFIG.model;
+        }
+        if (!parsed.url || parsed.url === 'https://api.hanice.vip/v1' || parsed.url.includes('hanice.vip')) {
+          parsed.url = DEFAULT_CONFIG.url;
+        }
+        if (!parsed.key || parsed.key.includes('m0TXNAjI1WWDbSvyugfb6j9WaA7xcQ60O7UNnpYHhv9eEut1')) {
+          parsed.key = DEFAULT_CONFIG.key;
         }
         if (!parsed.asrKey) {
           parsed.asrKey = DEFAULT_CONFIG.asrKey;
@@ -2472,6 +2459,8 @@
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 6000);
 
+      let checkModel = AI_CONFIG.model || DEFAULT_CONFIG.model;
+      if (checkModel === 'deepseek-v4-flash') checkModel = DEFAULT_CONFIG.model;
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -2479,7 +2468,7 @@
           'Authorization': `Bearer ${AI_CONFIG.key}`
         },
         body: JSON.stringify({
-          model: AI_CONFIG.model,
+          model: checkModel,
           messages: [{ role: 'user', content: 'hi' }],
           max_tokens: 1
         }),
@@ -3236,8 +3225,9 @@
     }
 
     const endpoint = getChatCompletionsUrl(AI_CONFIG.url);
-    const apiKey = (AI_CONFIG.key && AI_CONFIG.key.startsWith('sk-')) ? AI_CONFIG.key : DEFAULT_CONFIG.key;
-    const modelName = AI_CONFIG.model || DEFAULT_CONFIG.model;
+    const apiKey = (AI_CONFIG.key && AI_CONFIG.key.trim()) ? AI_CONFIG.key.trim() : DEFAULT_CONFIG.key;
+    let modelName = AI_CONFIG.model || DEFAULT_CONFIG.model;
+    if (modelName === 'deepseek-v4-flash') modelName = DEFAULT_CONFIG.model;
 
     const systemPrompt = `你是一个精准的汉字与词语提取助手。从用户的提问或输入语句中，提炼出用户想要查询笔顺的目标汉字或词语。
 规则：
@@ -3731,9 +3721,17 @@
 
     document.getElementById('cfg-admin-pwd').value = AI_CONFIG.adminPassword || DEFAULT_CONFIG.adminPassword || '1221';
 
-    resetPasswordVisibility('cfg-key', 'toggle-cfg-key');
-    resetPasswordVisibility('cfg-tencent-key', 'toggle-cfg-tencent-key');
-    resetPasswordVisibility('cfg-asr-key', 'toggle-cfg-asr-key');
+    const groupLlm = document.getElementById('group-llm');
+    if (groupLlm) groupLlm.classList.remove('is-open');
+
+    ['cfg-key', 'cfg-tencent-key', 'cfg-asr-key'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.type = 'password';
+        el.oncopy = (e) => { e.preventDefault(); return false; };
+        el.oncut = (e) => { e.preventDefault(); return false; };
+      }
+    });
     resetPasswordVisibility('cfg-admin-pwd', 'toggle-cfg-admin-pwd');
     settingsModal.classList.add('show');
   }
@@ -3817,9 +3815,14 @@
 
     document.getElementById('cfg-admin-pwd').value = DEFAULT_CONFIG.adminPassword;
 
-    resetPasswordVisibility('cfg-key', 'toggle-cfg-key');
-    resetPasswordVisibility('cfg-tencent-key', 'toggle-cfg-tencent-key');
-    resetPasswordVisibility('cfg-asr-key', 'toggle-cfg-asr-key');
+    ['cfg-key', 'cfg-tencent-key', 'cfg-asr-key'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.type = 'password';
+        el.oncopy = (e) => { e.preventDefault(); return false; };
+        el.oncut = (e) => { e.preventDefault(); return false; };
+      }
+    });
     resetPasswordVisibility('cfg-admin-pwd', 'toggle-cfg-admin-pwd');
   });
 
